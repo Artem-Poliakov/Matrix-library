@@ -1,11 +1,18 @@
 #include <matrix.h>
 #include <iostream>
 
-// constructor with parameters
+// constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
 	m_ptr = new double[rows * columns];
 	m_rows = rows;
 	m_columns = columns;
+}
+
+// constructor with 1 parameter
+linalg::Matrix::Matrix(size_t rows) {
+    m_ptr = new double[rows];
+    m_rows = rows;
+    m_columns = 1;
 }
 
 // copy constructor
@@ -24,6 +31,31 @@ linalg::Matrix::Matrix(Matrix&& mat) {
     std::swap(m_rows, mat.m_rows);
     std::swap(m_columns, mat.m_columns);
 }
+
+// init list constructor
+linalg::Matrix::Matrix(std::initializer_list<double> lst) {
+    size_t i = 0;
+    m_ptr = new double[lst.size() * (*lst).size()];
+    m_rows = lst.size();
+    m_columns = 1;
+    for (double el: lst) {
+        m_ptr[i++] = el;
+    }
+}
+
+// 2-d init list constructor
+linalg::Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst) {
+    size_t i = 0;
+    m_rows = lst.size();
+    m_columns = lst.begin()->size();
+    m_ptr = new double[m_rows * m_columns];
+    for (std::initializer_list<double> small_lst: lst) {
+        for (double el: small_lst) {
+            m_ptr[i++] = el;
+        }
+    }
+}
+
 
 // copy operator=
 linalg::Matrix& linalg::Matrix::operator=(const Matrix& mat) {
