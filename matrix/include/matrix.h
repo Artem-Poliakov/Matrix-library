@@ -19,12 +19,16 @@ namespace linalg {
         // operators
         Matrix& operator=(const Matrix& mat);
         Matrix& operator=(Matrix&& mat);
+        double& operator()(size_t row, size_t column) { return m_ptr[m_columns * row + column]; }
 
         // shape methods
         size_t rows() const { return m_rows; }
         size_t columns() const { return m_columns; }
         size_t size() const { return m_rows * m_columns; }
         bool empty() const { return m_ptr == nullptr; }
+
+        // visualising method
+        void print();
 
     private:
         double *m_ptr = nullptr;
