@@ -1,5 +1,6 @@
 #include <matrix.h>
 #include <iostream>
+#include <stdexcept>
 
 // constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
@@ -20,7 +21,7 @@ linalg::Matrix::Matrix(const Matrix& mat) {
     m_ptr = new double[mat.size()];
     m_rows = mat.rows();
     m_columns = mat.columns();
-    for (size_t i = 0; i < mat.size(); i++) {
+    for (size_t i = 0; i < mat.size(); ++i) {
         m_ptr[i] = mat.m_ptr[i];
     }
 }
@@ -38,8 +39,8 @@ linalg::Matrix::Matrix(std::initializer_list<double> lst) {
     m_rows = lst.size();
     m_columns = 1;
     m_ptr = new double[lst.size()];
-    for (double el: lst) {
-        m_ptr[i++] = el;
+    for (auto el: lst) {
+        m_ptr[i++] = static_cast<double>(el);
     }
 }
 
@@ -80,12 +81,22 @@ linalg::Matrix& linalg::Matrix::operator=(Matrix&& mat) {
 
 // visualising method
 void linalg::Matrix::print() {
-    for (size_t i = 0; i < m_rows; i++) {
+    for (size_t i = 0; i < m_rows; ++i) {
         std::cout << "| ";
-        for (size_t j = 0; j < m_columns; j++) {
+        for (size_t j = 0; j < m_columns; ++j) {
             std::cout << (*this)(i, j) << ' ';
         }
         std::cout << "|\n";
     }
     std::cout << "\n";
+}
+
+// method to change matrix shape
+void linalg::Matrix::reshape(size_t rows, size_t cols) {
+    if (rows * cols != this->size()) {
+        throw std::runtime_error("Matrix sizes are not suitable");
+    }
+
+    m_rows = rows;
+    m_columns = cols;
 }

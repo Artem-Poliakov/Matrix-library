@@ -5,7 +5,6 @@
 namespace linalg {
     class Matrix {
     public:
-
         // constructors & destructor
         Matrix() {}
         Matrix(size_t rows, size_t columns);
@@ -26,6 +25,7 @@ namespace linalg {
         size_t columns() const { return m_columns; }
         size_t size() const { return m_rows * m_columns; }
         bool empty() const { return m_ptr == nullptr; }
+        void reshape(size_t rows, size_t cols);
 
         // visualising method
         void print();
