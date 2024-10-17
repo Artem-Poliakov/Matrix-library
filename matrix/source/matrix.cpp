@@ -100,3 +100,118 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
     m_rows = rows;
     m_columns = cols;
 }
+
+// operator +=
+linalg::Matrix& linalg::Matrix::operator+=(const Matrix& mat) {
+    if (mat.rows() != this->rows() or mat.columns() != this->columns()) {
+        throw std::runtime_error("Matrix shapes are not suitable");
+    }
+    for (size_t i = 0; i < this->size(); ++i) {
+        this->m_ptr[i] += mat.m_ptr[i];
+    }
+    return *this;
+}
+
+// operator -=
+linalg::Matrix& linalg::Matrix::operator-=(const Matrix& mat) {
+    if (mat.rows() != this->rows() or mat.columns() != this->columns()) {
+        throw std::runtime_error("Matrix shapes are not suitable");
+    }
+    for (size_t i = 0; i < this->size(); ++i) {
+        this->m_ptr[i] -= mat.m_ptr[i];
+    }
+    return *this;
+}
+
+// operator *= for matrix multiplication
+linalg::Matrix& linalg::Matrix::operator*=(const Matrix& mat) {
+    if (this->columns() != mat.rows()) {
+        throw std::runtime_error("Matrix shapes are not suitable");
+    }
+    Matrix copy = (*this);
+    this->m_rows = copy.rows(), this->m_columns = mat.columns();
+    for (size_t row = 0; row < copy.rows(); ++row) {
+        for (size_t col = 0; col < mat.columns(); ++col) {
+            for (size_t i = 0; i < copy.columns(); ++i) {
+                (*this)(row, col) += (copy(row, i) * mat(i, col));
+            }
+        }
+    }
+    return *this;
+}
+
+// operator *= for multiplying matrix by a number
+linalg::Matrix& linalg::Matrix::operator*=(const double& value) {
+    for (size_t i = 0; i < this->rows(); ++i) {
+        for (size_t j = 0; j < this->columns(); ++j) {
+            (*this)(i, j) *= value;
+        }
+    }
+    return *this;
+}
+
+// operator +
+linalg::Matrix linalg::operator+(const linalg::Matrix& mat1, const linalg::Matrix& mat2) {
+    if (mat1.rows() != mat2.rows() or mat1.columns() != mat2.columns()) {
+        throw std::runtime_error("Matrix shapes are not suitable");
+    }
+    Matrix result = Matrix(mat1.rows(), mat1.columns());
+    for (size_t i = 0; i < mat1.rows(); ++i) {
+        for (size_t j = 0; j < mat1.columns(); ++j) {
+            result(i, j) = mat1(i, j) + mat2(i, j);
+        }
+    }
+    return result;
+}
+
+// operator -
+linalg::Matrix linalg::operator-(const linalg::Matrix& mat1, const linalg::Matrix& mat2) {
+    if (mat1.rows() != mat2.rows() or mat1.columns() != mat2.columns()) {
+        throw std::runtime_error("Matrix shapes are not suitable");
+    }
+    Matrix result = Matrix(mat1.rows(), mat1.columns());
+    for (size_t i = 0; i < mat1.rows(); ++i) {
+        for (size_t j = 0; j < mat1.columns(); ++j) {
+            result(i, j) = mat1(i, j) - mat2(i, j);
+        }
+    }
+    return result;
+}
+
+// operator * for matrix multiplication
+linalg::Matrix linalg::operator*(const linalg::Matrix& mat1, const linalg::Matrix& mat2) {
+    if (mat1.columns() != mat2.rows()) {
+        throw std::runtime_error("Matrix shapes are not suitable");
+    }
+    Matrix result = Matrix(mat1.rows(), mat2.columns());
+    for (size_t row = 0; row < mat1.rows(); ++row) {
+        for (size_t col = 0; col < mat2.columns(); ++col) {
+            for (size_t i = 0; i < mat1.columns(); ++i) {
+                result(row, col) += mat1(row, i) * mat2(i, col);
+            }
+        }
+    }
+    return result;
+}
+
+// operator * for multiplying matrix by a number (when number on the left)
+linalg::Matrix linalg::operator*(const double &value, const linalg::Matrix &mat) {
+    Matrix result(mat.rows(), mat.columns());
+    for (size_t i = 0; i < mat.rows(); ++i) {
+        for (size_t j = 0; j < mat.columns(); ++j) {
+            result(i, j) = mat(i, j) * value;
+        }
+    }
+    return result;
+}
+
+// operator * for multiplying matrix by a number (when number on the right)
+linalg::Matrix linalg::operator*(const linalg::Matrix &mat, const double &value) {
+    Matrix result(mat.rows(), mat.columns());
+    for (size_t i = 0; i < mat.rows(); ++i) {
+        for (size_t j = 0; j < mat.columns(); ++j) {
+            result(i, j) = mat(i, j) * value;
+        }
+    }
+    return result;
+}
