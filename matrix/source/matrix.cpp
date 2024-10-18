@@ -1,6 +1,9 @@
 #include <matrix.h>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
+#include <iomanip>
+#include <sstream>
 
 // constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
@@ -79,16 +82,31 @@ linalg::Matrix& linalg::Matrix::operator=(Matrix&& mat) {
     return *this;
 }
 
-// visualising method
-void linalg::Matrix::print() {
-    for (size_t i = 0; i < m_rows; ++i) {
-        std::cout << "| ";
-        for (size_t j = 0; j < m_columns; ++j) {
-            std::cout << (*this)(i, j) << ' ';
-        }
-        std::cout << "|\n";
+// visualising method (operator<<)
+std::ostream& linalg::operator<<(std::ostream& left, const Matrix& right) {
+    if (right.size() == 0) {
+        left << "| |";
+        return left;
     }
-    std::cout << "\n";
+    std::stringstream sout;
+    size_t maxlength = 0;
+    for (size_t i = 0; i < right.rows(); ++i) {
+        for (size_t j = 0; j < right.columns(); ++j) {
+            sout << right(i, j);
+            maxlength = std::max(maxlength, sout.str().size());
+            sout.str("");
+        }
+    }
+
+    for (size_t i = 0; i < right.rows(); ++i) {
+        left << '|';
+        left << std::setw(maxlength) << right(i, 0);
+        for (size_t j = 1; j < right.columns(); ++j) {
+            left << std::setw(maxlength + 1) << right(i, j);
+        }
+        left << '|' << '\n';
+    }
+    return left;
 }
 
 // method to change matrix shape

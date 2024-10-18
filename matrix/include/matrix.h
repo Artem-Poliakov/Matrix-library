@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <initializer_list>
+#include <ostream>
 
 namespace linalg {
     class Matrix {
@@ -31,18 +32,18 @@ namespace linalg {
         bool empty() const { return m_ptr == nullptr; }
         void reshape(size_t rows, size_t cols);
 
-        // visualising method
-        void print();
-
     private:
         double *m_ptr = nullptr;
         size_t m_rows = 0;
         size_t m_columns = 0;
     };
 
+    // arithmetic operators
     Matrix operator+(const Matrix& mat1, const Matrix& mat2);
     Matrix operator-(const Matrix& mat1, const Matrix& mat2);
     Matrix operator*(const Matrix& mat1, const Matrix& mat2);
     Matrix operator*(const Matrix& mat, const double& value);
     Matrix operator*(const double& value, const Matrix& mat);
+
+    std::ostream& operator<<(std::ostream& left, const Matrix& right);
 }
