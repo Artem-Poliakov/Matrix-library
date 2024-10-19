@@ -256,13 +256,22 @@ linalg::Matrix linalg::operator*(const linalg::Matrix &mat, const double &value)
 }
 
 // finding trace (sum of elements on main diagonal)
-double linalg::Matrix::trace(const linalg::Matrix &mat) const {
-    if (mat.rows() != mat.columns()) {
+double linalg::Matrix::trace() const {
+    if (this->m_rows != this->m_columns) {
         throw std::runtime_error("Matrix is not square");
     }
     double result = 0;
-    for (size_t i = 0; i < mat.rows(); ++i) {
-        result += mat(i, i);
+    for (size_t i = 0; i < this->m_rows; ++i) {
+        result += (*this)(i, i);
     }
     return result;
+}
+
+// finding Frobenius norm
+double linalg::Matrix::norm() const {
+    double result = 0;
+    for (size_t i = 0; i < (*this).size(); ++i) {
+        result += std::pow(this->m_ptr[i], 2);
+    }
+    return std::sqrt(result);
 }

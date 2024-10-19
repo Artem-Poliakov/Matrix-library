@@ -33,7 +33,8 @@ namespace linalg {
         void reshape(size_t rows, size_t cols);
 
         // linear algebra methods
-        double trace(const Matrix& mat) const;
+        double trace() const;
+        double norm() const;
 
     private:
         double *m_ptr = nullptr;
