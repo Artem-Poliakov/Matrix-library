@@ -19,7 +19,7 @@ namespace linalg {
         // operators
         Matrix& operator=(const Matrix& mat);
         Matrix& operator=(Matrix&& mat);
-        double& operator()(size_t row, size_t column) const { return m_ptr[m_columns * row + column]; }
+        double& operator()(size_t row, size_t col) const { return m_ptr[m_columns * row + col]; }
         Matrix& operator+=(const Matrix& mat);
         Matrix& operator-=(const Matrix& mat);
         Matrix& operator*=(const Matrix& mat);

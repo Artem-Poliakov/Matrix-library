@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <sstream>
 #include <cmath>
+#include <iostream>
 
 #define ACCURACY std::pow(10, -8)
 
@@ -338,6 +339,27 @@ double linalg::Matrix::det() const {
 
 // finding minor of a matrix
 double linalg::minor(const linalg::Matrix& mat, size_t row, size_t col) {
-    // det method is needed, will implement it later
-    return 0;
+    if (mat.rows() != mat.columns()) {
+        throw std::runtime_error("Matrix is not square");
+    }
+    int flag_i = 0;
+    Matrix processed_mat(mat.rows() - 1, mat.columns() - 1);
+    for (size_t i = 0; i < mat.rows(); ++i) {
+        int flag_j = 0;
+        if (i == row) {
+            ++flag_i;
+        }
+        else {
+            for (size_t j = 0; j < mat.columns(); ++j) {
+                if (j == col) {
+                    ++flag_j;
+                }
+                else {
+                    processed_mat(i - flag_i, j - flag_j) = mat(i, j);
+                }
+            }
+        }
+    }
+    // std::cout << processed_mat;
+    return processed_mat.det();
 }
