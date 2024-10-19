@@ -123,33 +123,33 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
 
 // operator +=
 linalg::Matrix& linalg::Matrix::operator+=(const Matrix& mat) {
-    if (mat.rows() != this->rows() or mat.columns() != this->columns()) {
+    if (mat.rows() != m_rows or mat.columns() != m_columns) {
         throw std::runtime_error("Matrix shapes are not suitable");
     }
     for (size_t i = 0; i < this->size(); ++i) {
-        this->m_ptr[i] += mat.m_ptr[i];
+        m_ptr[i] += mat.m_ptr[i];
     }
     return *this;
 }
 
 // operator -=
 linalg::Matrix& linalg::Matrix::operator-=(const Matrix& mat) {
-    if (mat.rows() != this->rows() or mat.columns() != this->columns()) {
+    if (mat.rows() != m_rows or mat.columns() != m_columns) {
         throw std::runtime_error("Matrix shapes are not suitable");
     }
     for (size_t i = 0; i < this->size(); ++i) {
-        this->m_ptr[i] -= mat.m_ptr[i];
+        m_ptr[i] -= mat.m_ptr[i];
     }
     return *this;
 }
 
 // operator *= for matrix multiplication
 linalg::Matrix& linalg::Matrix::operator*=(const Matrix& mat) {
-    if (this->columns() != mat.rows()) {
+    if (m_columns != mat.rows()) {
         throw std::runtime_error("Matrix shapes are not suitable");
     }
     Matrix copy = (*this);
-    this->m_rows = copy.rows(), this->m_columns = mat.columns();
+    m_rows = copy.rows(), m_columns = mat.columns();
     for (size_t row = 0; row < copy.rows(); ++row) {
         for (size_t col = 0; col < mat.columns(); ++col) {
             for (size_t i = 0; i < copy.columns(); ++i) {
@@ -162,8 +162,8 @@ linalg::Matrix& linalg::Matrix::operator*=(const Matrix& mat) {
 
 // operator *= for multiplying matrix by a number
 linalg::Matrix& linalg::Matrix::operator*=(const double& value) {
-    for (size_t i = 0; i < this->rows(); ++i) {
-        for (size_t j = 0; j < this->columns(); ++j) {
+    for (size_t i = 0; i < m_rows; ++i) {
+        for (size_t j = 0; j < m_columns; ++j) {
             (*this)(i, j) *= value;
         }
     }
@@ -252,11 +252,11 @@ linalg::Matrix linalg::operator*(const linalg::Matrix& mat, const double& value)
 
 // finding trace (sum of elements on main diagonal)
 double linalg::Matrix::trace() const {
-    if (this->m_rows != this->m_columns) {
+    if (m_rows != m_columns) {
         throw std::runtime_error("Matrix is not square");
     }
     double result = 0;
-    for (size_t i = 0; i < this->m_rows; ++i) {
+    for (size_t i = 0; i < m_rows; ++i) {
         result += (*this)(i, i);
     }
     return result;
@@ -265,22 +265,10 @@ double linalg::Matrix::trace() const {
 // finding Frobenius norm
 double linalg::Matrix::norm() const {
     double result = 0;
-    for (size_t i = 0; i < (*this).size(); ++i) {
-        result += std::pow(this->m_ptr[i], 2);
+    for (size_t i = 0; i < this->size(); ++i) {
+        result += std::pow(m_ptr[i], 2);
     }
     return std::sqrt(result);
-}
-
-// finding determinant
-double linalg::Matrix::det() const {
-    // gaussian_elimination func is needed, will implement it later
-    return 0;
-}
-
-// finding minor of a matrix
-double linalg::minor(const linalg::Matrix& mat, size_t row, size_t col) {
-    // det method is needed, will implement it later
-    return 0;
 }
 
 // matrix echelon reduction
@@ -333,4 +321,23 @@ linalg::Matrix linalg::gaussian_elimination(const linalg::Matrix& mat) {
     }
 
     return copy;
+}
+
+// finding determinant
+double linalg::Matrix::det() const {
+    if (m_rows != m_columns) {
+        throw std::runtime_error("Matrix is not square");
+    }
+    double det = 1;
+    Matrix processed_mat = gaussian_elimination(*this);
+    for (size_t i = 0; i < m_rows; ++i) {
+        det *= processed_mat(i, i);
+    }
+    return det;
+}
+
+// finding minor of a matrix
+double linalg::minor(const linalg::Matrix& mat, size_t row, size_t col) {
+    // det method is needed, will implement it later
+    return 0;
 }

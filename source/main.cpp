@@ -2,8 +2,9 @@
 #include <iostream>
 
 int main() {
-    linalg::Matrix mat = {{24, 1, 11, 44}, {10, 7, 0, 78}, {3, 16, 45, 19}};
+    linalg::Matrix mat = {{0, 1, -1}, {-3, 7,0}, {-2, 1,0}};
 
-    std::cout << gaussian_elimination(mat) << std::endl;
     std::cout << mat << std::endl;
+    std::cout << gaussian_elimination(mat) << std::endl;
+    std::cout << mat.det() << std::endl;
 }
