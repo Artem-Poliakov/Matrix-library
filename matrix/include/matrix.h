@@ -35,6 +35,7 @@ namespace linalg {
         // linear algebra methods
         double trace() const;
         double norm() const;
+        double det() const;
 
     private:
         double *m_ptr = nullptr;
@@ -53,5 +54,10 @@ namespace linalg {
     bool operator==(const Matrix& mat1, const Matrix& mat2);
     bool operator!=(const Matrix& mat1, const Matrix& mat2);
 
+    // visualizing operator
     std::ostream& operator<<(std::ostream& left, const Matrix& right);
+
+    // linear algebra functions
+    Matrix gaussian_elimination(const Matrix& mat);
+    double minor(const Matrix& mat, size_t row, size_t col);
 }

@@ -1,10 +1,11 @@
 #include <matrix.h>
-
 #include <stdexcept>
 #include <utility>
 #include <iomanip>
 #include <sstream>
 #include <cmath>
+
+#define ACCURACY std::pow(10, -8)
 
 // constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
@@ -176,7 +177,7 @@ bool linalg::operator==(const linalg::Matrix &mat1, const linalg::Matrix &mat2) 
     }
     for (size_t i = 0; i < mat1.rows(); ++i) {
         for (size_t j = 0; j < mat1.columns(); ++j) {
-            if (std::abs(mat1(i, j) - mat2(i, j)) > std::pow(10, -6)) {
+            if (std::abs(mat1(i, j) - mat2(i, j)) > ACCURACY) {
                 return false;
             }
         }
@@ -234,7 +235,7 @@ linalg::Matrix linalg::operator*(const linalg::Matrix& mat1, const linalg::Matri
 }
 
 // operator * for multiplying matrix by a number (when number on the left)
-linalg::Matrix linalg::operator*(const double &value, const linalg::Matrix &mat) {
+linalg::Matrix linalg::operator*(const double& value, const linalg::Matrix& mat) {
     Matrix result(mat.rows(), mat.columns());
     for (size_t i = 0; i < mat.rows(); ++i) {
         for (size_t j = 0; j < mat.columns(); ++j) {
@@ -245,14 +246,8 @@ linalg::Matrix linalg::operator*(const double &value, const linalg::Matrix &mat)
 }
 
 // operator * for multiplying matrix by a number (when number on the right)
-linalg::Matrix linalg::operator*(const linalg::Matrix &mat, const double &value) {
-    Matrix result(mat.rows(), mat.columns());
-    for (size_t i = 0; i < mat.rows(); ++i) {
-        for (size_t j = 0; j < mat.columns(); ++j) {
-            result(i, j) = mat(i, j) * value;
-        }
-    }
-    return result;
+linalg::Matrix linalg::operator*(const linalg::Matrix& mat, const double& value) {
+    return value * mat;
 }
 
 // finding trace (sum of elements on main diagonal)
@@ -274,4 +269,68 @@ double linalg::Matrix::norm() const {
         result += std::pow(this->m_ptr[i], 2);
     }
     return std::sqrt(result);
+}
+
+// finding determinant
+double linalg::Matrix::det() const {
+    // gaussian_elimination func is needed, will implement it later
+    return 0;
+}
+
+// finding minor of a matrix
+double linalg::minor(const linalg::Matrix& mat, size_t row, size_t col) {
+    // det method is needed, will implement it later
+    return 0;
+}
+
+// matrix echelon reduction
+linalg::Matrix linalg::gaussian_elimination(const linalg::Matrix& mat) {
+    size_t n = mat.rows();
+    size_t m = mat.columns();
+    // will work with copy of the matrix
+    Matrix copy = mat;
+    // will count all row swaps and at the end change the sign of one row depending on it's oddness
+    size_t swap_counter = 0;
+
+    for (size_t i = 0; i < n; ++i) {
+        // finding maximum element in a column
+        double max_el = std::fabs(copy(i, i));
+        size_t max_row = i;
+        for (size_t k = i + 1; k < n; ++k) {
+            if (std::fabs(copy(k, i)) > max_el) {
+                max_el = std::fabs(copy(k, i));
+                max_row = k;
+            }
+        }
+        // swapping current row with the one, where maximum element was found
+        if (i != max_row) {
+            for (size_t k = i; k < m; ++k) {
+                std::swap(copy(max_row, k), copy(i, k));
+            }
+            ++swap_counter;
+        }
+        // gaussian method
+        for (size_t k = i + 1; k < n; ++k) {
+            // if there is no more non-zero rows: end the algorithm
+            if (std::fabs(copy(i, i)) < ACCURACY) {
+                return copy;
+            }
+            // else: continue
+            double coefficient = copy(k, i) / copy(i, i);
+            for (size_t j = i; j < m; ++j) {
+                copy(k, j) -= coefficient * copy(i, j);
+                if (std::fabs(copy(k, j)) < ACCURACY) {
+                    copy(k, j) = 0;
+                }
+            }
+        }
+    }
+    // changing sign of one row if swap counter is odd
+    if (swap_counter % 2 != 0) {
+        for (size_t p = 0; p < m; ++p) {
+            copy(0, p) *= (-1);
+        }
+    }
+
+    return copy;
 }
