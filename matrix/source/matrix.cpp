@@ -1,9 +1,10 @@
 #include <matrix.h>
-#include <iostream>
+
 #include <stdexcept>
 #include <utility>
 #include <iomanip>
 #include <sstream>
+#include <cmath>
 
 // constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
@@ -60,7 +61,7 @@ linalg::Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst)
     }
 }
 
-// copy operator=
+// copy operator =
 linalg::Matrix& linalg::Matrix::operator=(const Matrix& mat) {
     if (mat.rows() != m_rows or mat.columns() != m_columns) {
         delete[] m_ptr;
@@ -74,7 +75,7 @@ linalg::Matrix& linalg::Matrix::operator=(const Matrix& mat) {
     return *this;
 }
 
-// move operator=
+// move operator =
 linalg::Matrix& linalg::Matrix::operator=(Matrix&& mat) {
     std::swap(m_ptr, mat.m_ptr);
     std::swap(m_rows, mat.m_rows);
@@ -82,7 +83,7 @@ linalg::Matrix& linalg::Matrix::operator=(Matrix&& mat) {
     return *this;
 }
 
-// visualising method (operator<<)
+// visualising method (operator <<)
 std::ostream& linalg::operator<<(std::ostream& left, const Matrix& right) {
     if (right.size() == 0) {
         left << "| |";
@@ -166,6 +167,26 @@ linalg::Matrix& linalg::Matrix::operator*=(const double& value) {
         }
     }
     return *this;
+}
+
+// operator == for comparing matrices
+bool linalg::operator==(const linalg::Matrix &mat1, const linalg::Matrix &mat2) {
+    if (mat1.rows() != mat2.rows() or mat1.columns() != mat2.columns()) {
+        return false;
+    }
+    for (size_t i = 0; i < mat1.rows(); ++i) {
+        for (size_t j = 0; j < mat1.columns(); ++j) {
+            if (std::abs(mat1(i, j) - mat2(i, j)) > std::pow(10, -6)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// operator != for comparing matrices
+bool linalg::operator!=(const linalg::Matrix &mat1, const linalg::Matrix &mat2) {
+    return not(mat1 == mat2);
 }
 
 // operator +

@@ -45,5 +45,9 @@ namespace linalg {
     Matrix operator*(const Matrix& mat, const double& value);
     Matrix operator*(const double& value, const Matrix& mat);
 
+    // logic operators
+    bool operator==(const Matrix& mat1, const Matrix& mat2);
+    bool operator!=(const Matrix& mat1, const Matrix& mat2);
+
     std::ostream& operator<<(std::ostream& left, const Matrix& right);
 }
