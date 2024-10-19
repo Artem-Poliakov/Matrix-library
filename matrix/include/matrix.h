@@ -32,6 +32,9 @@ namespace linalg {
         bool empty() const { return m_ptr == nullptr; }
         void reshape(size_t rows, size_t cols);
 
+        // linear algebra methods
+        double trace(const Matrix& mat) const;
+
     private:
         double *m_ptr = nullptr;
         size_t m_rows = 0;

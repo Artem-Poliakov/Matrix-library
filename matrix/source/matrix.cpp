@@ -254,3 +254,15 @@ linalg::Matrix linalg::operator*(const linalg::Matrix &mat, const double &value)
     }
     return result;
 }
+
+// finding trace (sum of elements on main diagonal)
+double linalg::Matrix::trace(const linalg::Matrix &mat) const {
+    if (mat.rows() != mat.columns()) {
+        throw std::runtime_error("Matrix is not square");
+    }
+    double result = 0;
+    for (size_t i = 0; i < mat.rows(); ++i) {
+        result += mat(i, i);
+    }
+    return result;
+}
