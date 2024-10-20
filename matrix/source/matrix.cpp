@@ -342,24 +342,39 @@ double linalg::minor(const linalg::Matrix& mat, size_t row, size_t col) {
     if (mat.rows() != mat.columns()) {
         throw std::runtime_error("Matrix is not square");
     }
-    int flag_i = 0;
+    // making a copy of mat, but w/o one row and one column
     Matrix processed_mat(mat.rows() - 1, mat.columns() - 1);
+    int flag_i = 0;
     for (size_t i = 0; i < mat.rows(); ++i) {
         int flag_j = 0;
-        if (i == row) {
-            ++flag_i;
-        }
+        if (i == row) { ++flag_i; }
         else {
             for (size_t j = 0; j < mat.columns(); ++j) {
-                if (j == col) {
-                    ++flag_j;
-                }
-                else {
-                    processed_mat(i - flag_i, j - flag_j) = mat(i, j);
-                }
+                if (j == col) { ++flag_j; }
+                else { processed_mat(i - flag_i, j - flag_j) = mat(i, j); }
             }
         }
     }
-    // std::cout << processed_mat;
+    // finding its determinant
     return processed_mat.det();
+}
+
+// expanding one matrix horizontally, using another (returns a copy of result)
+linalg::Matrix linalg::concatenate(const Matrix& mat1, const Matrix& mat2) {
+    size_t n = mat1.rows();
+    if (n != mat2.rows()) {
+        throw std::runtime_error("Matrix shapes are not suitable");
+    }
+    Matrix extended_mat(n, mat1.columns() + mat2.columns());
+    for (size_t i = 0; i < n; ++i) {
+        // full the first part of a row (elements of mat1)
+        for (size_t j1 = 0; j1 < mat1.columns(); ++j1) {
+            extended_mat(i, j1) = mat1(i, j1);
+        }
+        // full the second part of a row (elements of mat2)
+        for (size_t j2 = 0; j2 < mat2.columns(); ++j2) {
+            extended_mat(i, mat1.columns() + j2) = mat2(i, j2);
+        }
+    }
+    return extended_mat;
 }

@@ -60,4 +60,5 @@ namespace linalg {
     // linear algebra functions
     Matrix gaussian_elimination(const Matrix& mat);
     double minor(const Matrix& mat, size_t row, size_t col);
+    Matrix concatenate(const Matrix& mat1, const Matrix& mat2);
 }
