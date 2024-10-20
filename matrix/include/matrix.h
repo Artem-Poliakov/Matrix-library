@@ -37,6 +37,9 @@ namespace linalg {
         double norm() const;
         double det() const;
 
+        // other methods
+        void check_zeros() const;
+
     private:
         double *m_ptr = nullptr;
         size_t m_rows = 0;
@@ -62,4 +65,5 @@ namespace linalg {
     double minor(const Matrix& mat, size_t row, size_t col);
     Matrix concatenate(const Matrix& mat1, const Matrix& mat2);
     Matrix transpose(const Matrix& mat);
+    Matrix inverse(const Matrix& mat);
 }

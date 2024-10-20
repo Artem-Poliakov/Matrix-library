@@ -122,6 +122,15 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
     m_columns = cols;
 }
 
+// supporting method for getting rid of elements which are lesser than ACCURACY
+void linalg::Matrix::check_zeros() const {
+    for (size_t i = 0; i < m_rows; ++i) {
+        for (size_t j = 0; j < m_columns; ++j) {
+            if ((*this)(i, j) < ACCURACY) {(*this)(i, j) = 0; }
+        }
+    }
+}
+
 // operator +=
 linalg::Matrix& linalg::Matrix::operator+=(const Matrix& mat) {
     if (mat.rows() != m_rows or mat.columns() != m_columns) {
@@ -158,6 +167,7 @@ linalg::Matrix& linalg::Matrix::operator*=(const Matrix& mat) {
             }
         }
     }
+    (*this).check_zeros();
     return *this;
 }
 
@@ -232,6 +242,7 @@ linalg::Matrix linalg::operator*(const linalg::Matrix& mat1, const linalg::Matri
             }
         }
     }
+    result.check_zeros();
     return result;
 }
 
@@ -389,4 +400,22 @@ linalg::Matrix linalg::transpose(const linalg::Matrix& mat) {
         }
     }
     return copy;
+}
+
+// finding inverse matrix
+linalg::Matrix linalg::inverse(const linalg::Matrix& mat) {
+    double det = mat.det();
+    if (std::fabs(det) < ACCURACY) {
+        throw std::runtime_error("Matrix determinant is 0; inverse matrix cannot be found");
+    }
+    size_t n = mat.rows();
+    Matrix result(n, n);
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < n; ++j) {
+            result(i, j) = std::pow(-1, i + j) * minor(mat, i, j);
+        }
+    }
+    result = transpose(result);
+    result = (1 / det) * result;
+    return result;
 }
