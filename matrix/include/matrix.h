@@ -66,5 +66,5 @@ namespace linalg {
     Matrix concatenate(const Matrix& mat1, const Matrix& mat2);
     Matrix transpose(const Matrix& mat);
     Matrix inverse(const Matrix& mat);
-    Matrix power(const Matrix& mat, const unsigned int& deg);
+    Matrix power(const Matrix& mat, const int& deg);
 }

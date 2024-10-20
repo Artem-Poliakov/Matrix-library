@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <sstream>
 #include <cmath>
-#include <iostream>
 
 #define ACCURACY std::pow(10, -8)
 
@@ -424,12 +423,15 @@ linalg::Matrix linalg::inverse(const linalg::Matrix& mat) {
     return result;
 }
 
-// finding mat^deg (for integer deg > 0)
-linalg::Matrix linalg::power(const linalg::Matrix& mat, const unsigned int& deg) {
+// finding mat^deg
+linalg::Matrix linalg::power(const linalg::Matrix& mat, const int& deg) {
     if (mat.rows() != mat.columns()) {
         throw std::runtime_error("Matrix is not square");
     }
-    if (deg == 0) {
+    if (deg < 0) {
+        return power(inverse(mat), -deg);
+    }
+    else if (deg == 0) {
         Matrix identity_matrix(mat.rows(), mat.columns());
         for (size_t i = 0; i < identity_matrix.rows(); ++i) {
             for (size_t j = 0; j < identity_matrix.columns(); ++j) {
