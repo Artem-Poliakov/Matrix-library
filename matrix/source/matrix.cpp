@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <sstream>
 #include <cmath>
-#include <iostream>
 
 #define ACCURACY std::pow(10, -8)
 
@@ -126,7 +125,7 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
 void linalg::Matrix::check_zeros() const {
     for (size_t i = 0; i < m_rows; ++i) {
         for (size_t j = 0; j < m_columns; ++j) {
-            if ((*this)(i, j) < ACCURACY) {(*this)(i, j) = 0; }
+            if (std::fabs((*this)(i, j)) < ACCURACY) {(*this)(i, j) = 0; }
         }
     }
 }
@@ -237,6 +236,7 @@ linalg::Matrix linalg::operator*(const linalg::Matrix& mat1, const linalg::Matri
     Matrix result = Matrix(mat1.rows(), mat2.columns());
     for (size_t row = 0; row < mat1.rows(); ++row) {
         for (size_t col = 0; col < mat2.columns(); ++col) {
+            result(row, col) = 0;
             for (size_t i = 0; i < mat1.columns(); ++i) {
                 result(row, col) += mat1(row, i) * mat2(i, col);
             }
@@ -408,6 +408,8 @@ linalg::Matrix linalg::inverse(const linalg::Matrix& mat) {
     if (std::fabs(det) < ACCURACY) {
         throw std::runtime_error("Matrix determinant is 0; inverse matrix cannot be found");
     }
+    // M^(-1) = ( 1/det(M) ) * transpose({Aij})
+    // where Aij = (-1)^(i + j) * minor(M, i, j)
     size_t n = mat.rows();
     Matrix result(n, n);
     for (size_t i = 0; i < n; ++i) {
@@ -418,4 +420,28 @@ linalg::Matrix linalg::inverse(const linalg::Matrix& mat) {
     result = transpose(result);
     result = (1 / det) * result;
     return result;
+}
+
+// finding mat^deg (for integer deg > 0)
+linalg::Matrix linalg::power(const linalg::Matrix& mat, const unsigned int& deg) {
+    if (mat.rows() != mat.columns()) {
+        throw std::runtime_error("Matrix is not square");
+    }
+    if (deg == 0) {
+        Matrix identity_matrix(mat.rows(), mat.columns());
+        for (size_t i = 0; i < identity_matrix.rows(); ++i) {
+            for (size_t j = 0; j < identity_matrix.columns(); ++j) {
+                if (i == j) { identity_matrix(i, j) = 1; }
+                else { identity_matrix(i, j) = 0; }
+            }
+        }
+        return identity_matrix;
+    }
+    else if (deg % 2 == 0) {
+        Matrix tmp = power(mat, deg / 2);
+        return tmp * tmp;
+    }
+    else {
+        return power(mat, deg - 1) * mat;
+    }
 }
