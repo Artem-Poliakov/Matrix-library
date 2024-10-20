@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <sstream>
 #include <cmath>
+#include <iostream>
 
 #define ACCURACY std::pow(10, -8)
 
@@ -157,12 +158,13 @@ linalg::Matrix& linalg::Matrix::operator*=(const Matrix& mat) {
     if (m_columns != mat.rows()) {
         throw std::runtime_error("Matrix shapes are not suitable");
     }
-    Matrix copy = (*this);
-    m_rows = copy.rows(), m_columns = mat.columns();
-    for (size_t row = 0; row < copy.rows(); ++row) {
-        for (size_t col = 0; col < mat.columns(); ++col) {
-            for (size_t i = 0; i < copy.columns(); ++i) {
-                (*this)(row, col) += (copy(row, i) * mat(i, col));
+    Matrix copy1 = (*this);
+    Matrix copy2 = mat;
+    for (size_t row = 0; row < m_rows; ++row) {
+        for (size_t col = 0; col < m_columns; ++col) {
+            (*this)(row, col) = 0;
+            for (size_t i = 0; i < m_columns; ++i) {
+                (*this)(row, col) += copy1(row, i) * copy2(i, col);
             }
         }
     }
