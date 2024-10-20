@@ -378,3 +378,18 @@ linalg::Matrix linalg::concatenate(const Matrix& mat1, const Matrix& mat2) {
     }
     return extended_mat;
 }
+
+// transposing matrix
+linalg::Matrix linalg::transpose(const linalg::Matrix& mat) {
+    size_t n = mat.rows();
+    if (n != mat.columns()) {
+        throw std::runtime_error("Matrix is not square");
+    }
+    Matrix copy(n, n);
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < n; ++j) {
+            copy(i, j) = mat(j, i);
+        }
+    }
+    return copy;
+}
