@@ -121,7 +121,7 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
     m_columns = cols;
 }
 
-// supporting method for getting rid of elements which are lesser than ACCURACY
+// method for getting rid of elements which are lesser than ACCURACY
 void linalg::Matrix::check_zeros() const {
     for (size_t i = 0; i < m_rows; ++i) {
         for (size_t j = 0; j < m_columns; ++j) {
@@ -203,29 +203,15 @@ bool linalg::operator!=(const linalg::Matrix &mat1, const linalg::Matrix &mat2) 
 
 // operator +
 linalg::Matrix linalg::operator+(const linalg::Matrix& mat1, const linalg::Matrix& mat2) {
-    if (mat1.rows() != mat2.rows() or mat1.columns() != mat2.columns()) {
-        throw std::runtime_error("Matrix shapes are not suitable");
-    }
-    Matrix result = Matrix(mat1.rows(), mat1.columns());
-    for (size_t i = 0; i < mat1.rows(); ++i) {
-        for (size_t j = 0; j < mat1.columns(); ++j) {
-            result(i, j) = mat1(i, j) + mat2(i, j);
-        }
-    }
+    Matrix result = mat1;
+    result += mat2;
     return result;
 }
 
 // operator -
 linalg::Matrix linalg::operator-(const linalg::Matrix& mat1, const linalg::Matrix& mat2) {
-    if (mat1.rows() != mat2.rows() or mat1.columns() != mat2.columns()) {
-        throw std::runtime_error("Matrix shapes are not suitable");
-    }
-    Matrix result = Matrix(mat1.rows(), mat1.columns());
-    for (size_t i = 0; i < mat1.rows(); ++i) {
-        for (size_t j = 0; j < mat1.columns(); ++j) {
-            result(i, j) = mat1(i, j) - mat2(i, j);
-        }
-    }
+    Matrix result = mat1;
+    result -= mat2;
     return result;
 }
 
@@ -249,18 +235,16 @@ linalg::Matrix linalg::operator*(const linalg::Matrix& mat1, const linalg::Matri
 
 // operator * for multiplying matrix by a number (when number on the left)
 linalg::Matrix linalg::operator*(const double& value, const linalg::Matrix& mat) {
-    Matrix result(mat.rows(), mat.columns());
-    for (size_t i = 0; i < mat.rows(); ++i) {
-        for (size_t j = 0; j < mat.columns(); ++j) {
-            result(i, j) = mat(i, j) * value;
-        }
-    }
+    Matrix result = mat;
+    result *= value;
     return result;
 }
 
 // operator * for multiplying matrix by a number (when number on the right)
 linalg::Matrix linalg::operator*(const linalg::Matrix& mat, const double& value) {
-    return value * mat;
+    Matrix result = mat;
+    result *= value;
+    return result;
 }
 
 // finding trace (sum of elements on main diagonal)

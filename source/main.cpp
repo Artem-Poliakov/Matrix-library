@@ -2,7 +2,11 @@
 #include <iostream>
 
 int main() {
-    linalg::Matrix mat = {{5, -1, 8}, {4, -43, 1}, {0, -5, 9}};
+    linalg::Matrix mat1 = {{1, 0, 8}, {9, -4, 9}, {1, -5, 0}};
+    linalg::Matrix mat2 = {{-5, 1, 7}, {2, -7, 1}, {-3, -5, 9}};
 
-    std::cout << ( linalg::power(mat, -3) == linalg::inverse(linalg::power(mat, 3)) );
+    std::cout << mat1 + mat2 << std::endl;
+    std::cout << mat1 - mat2 << std::endl;
+    std::cout << mat1 * 0.33 << std::endl;
+    std::cout << 0.33 * mat1 << std::endl;
 }
