@@ -452,6 +452,26 @@ linalg::Matrix linalg::inverse(const linalg::Matrix& mat) {
     return result;
 }
 
+// generating rows x cols matrix, filled with zeros
+linalg::Matrix linalg::zeros_matrix(size_t rows, size_t cols) {
+    Matrix result(rows, cols);
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            result(i, j) = 0;
+        }
+    }
+    return result;
+}
+
+// generating n x n identity matrix
+linalg::Matrix linalg::identity_matrix(size_t n) {
+    Matrix result = zeros_matrix(n, n);
+    for (size_t i = 0; i < n; ++i) {
+        result(i, i) = 1;
+    }
+    return result;
+}
+
 // finding mat^deg
 linalg::Matrix linalg::power(const linalg::Matrix& mat, const int& deg) {
     if (mat.rows() != mat.columns()) {
@@ -461,14 +481,7 @@ linalg::Matrix linalg::power(const linalg::Matrix& mat, const int& deg) {
         return power(inverse(mat), -deg);
     }
     else if (deg == 0) {
-        Matrix identity_matrix(mat.rows(), mat.columns());
-        for (size_t i = 0; i < identity_matrix.rows(); ++i) {
-            for (size_t j = 0; j < identity_matrix.columns(); ++j) {
-                if (i == j) { identity_matrix(i, j) = 1; }
-                else { identity_matrix(i, j) = 0; }
-            }
-        }
-        return identity_matrix;
+        return identity_matrix(mat.rows());
     }
     else if (deg % 2 == 0) {
         Matrix tmp = power(mat, deg / 2);

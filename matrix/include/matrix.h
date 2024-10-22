@@ -86,4 +86,8 @@ namespace linalg {
     Matrix transpose(const Matrix& mat);
     Matrix inverse(const Matrix& mat);
     Matrix power(const Matrix& mat, const int& deg);
+
+    // certain types of matrices
+    Matrix identity_matrix(size_t n);
+    Matrix zeros_matrix(size_t rows, size_t cols);
 }
