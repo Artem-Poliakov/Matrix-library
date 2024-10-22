@@ -230,6 +230,13 @@ linalg::Matrix& linalg::Matrix::operator*=(const double& value) {
     return *this;
 }
 
+// unary minus
+linalg::Matrix linalg::Matrix::operator-() {
+    Matrix result = (*this);
+    result *= (-1);
+    return result;
+}
+
 // operator == for comparing matrices
 bool linalg::operator==(const linalg::Matrix &mat1, const linalg::Matrix &mat2) {
     if (mat1.rows() != mat2.rows() or mat1.columns() != mat2.columns()) {

@@ -42,6 +42,7 @@ namespace linalg {
         Matrix& operator-=(const Matrix& mat);
         Matrix& operator*=(const Matrix& mat);
         Matrix& operator*=(const double& value);
+        Matrix operator-();
 
         // shape methods
         size_t rows() const noexcept { return m_rows; }
