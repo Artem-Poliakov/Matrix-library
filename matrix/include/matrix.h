@@ -6,6 +6,18 @@
 namespace linalg {
     class Matrix {
     public:
+        // proxy class ( just for getting matrix elements by calling "matrix[][]")
+        class Row {
+            friend Matrix;
+        public:
+            double& operator[](size_t col_i) { return m_ptr[col_i]; }
+            const double& operator[](size_t col_i) const { return m_ptr[col_i]; }
+        private:
+            Row(Matrix& mat, size_t row_i) { m_ptr = mat.m_ptr + row_i * mat.m_columns; }
+            Row(const Matrix& mat, size_t row_i) { m_ptr = mat.m_ptr + row_i * mat.m_columns; }
+            double* m_ptr = nullptr;
+        };
+
         // constructors & destructor
         Matrix() {}
         Matrix(size_t rows, size_t columns);
@@ -19,17 +31,21 @@ namespace linalg {
         // operators
         Matrix& operator=(const Matrix& mat);
         Matrix& operator=(Matrix&& mat);
-        double& operator()(size_t row, size_t col) const { return m_ptr[m_columns * row + col]; }
+        double& operator()(size_t row, size_t col) { return m_ptr[m_columns * row + col]; }
+        const double& operator()(size_t row, size_t col) const { return m_ptr[m_columns * row + col]; }
+        Row operator[](size_t row_i) { return {*this, row_i}; }
+        const Row operator[](size_t row_i) const { return {*this, row_i}; }
+
         Matrix& operator+=(const Matrix& mat);
         Matrix& operator-=(const Matrix& mat);
         Matrix& operator*=(const Matrix& mat);
         Matrix& operator*=(const double& value);
 
         // shape methods
-        size_t rows() const { return m_rows; }
-        size_t columns() const { return m_columns; }
-        size_t size() const { return m_rows * m_columns; }
-        bool empty() const { return m_ptr == nullptr; }
+        size_t rows() const noexcept { return m_rows; }
+        size_t columns() const noexcept { return m_columns; }
+        size_t size() const noexcept { return m_rows * m_columns; }
+        bool empty() const noexcept { return m_ptr == nullptr; }
         void reshape(size_t rows, size_t cols);
 
         // linear algebra methods
@@ -38,7 +54,7 @@ namespace linalg {
         double det() const;
 
         // other methods
-        void check_zeros() const;
+        void check_zeros();
 
     private:
         double *m_ptr = nullptr;

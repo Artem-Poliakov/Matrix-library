@@ -7,6 +7,7 @@
 
 #define ACCURACY std::pow(10, -8)
 
+
 // constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
 	m_ptr = new double[rows * columns];
@@ -122,7 +123,7 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
 }
 
 // method for getting rid of elements which are lesser than ACCURACY
-void linalg::Matrix::check_zeros() const {
+void linalg::Matrix::check_zeros() {
     for (size_t i = 0; i < m_rows; ++i) {
         for (size_t j = 0; j < m_columns; ++j) {
             if (std::fabs((*this)(i, j)) < ACCURACY) {(*this)(i, j) = 0; }
@@ -217,19 +218,8 @@ linalg::Matrix linalg::operator-(const linalg::Matrix& mat1, const linalg::Matri
 
 // operator * for matrix multiplication
 linalg::Matrix linalg::operator*(const linalg::Matrix& mat1, const linalg::Matrix& mat2) {
-    if (mat1.columns() != mat2.rows()) {
-        throw std::runtime_error("Matrix shapes are not suitable");
-    }
-    Matrix result = Matrix(mat1.rows(), mat2.columns());
-    for (size_t row = 0; row < mat1.rows(); ++row) {
-        for (size_t col = 0; col < mat2.columns(); ++col) {
-            result(row, col) = 0;
-            for (size_t i = 0; i < mat1.columns(); ++i) {
-                result(row, col) += mat1(row, i) * mat2(i, col);
-            }
-        }
-    }
-    result.check_zeros();
+    Matrix result = mat1;
+    result *= mat2;
     return result;
 }
 
