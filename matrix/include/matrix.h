@@ -10,12 +10,14 @@ namespace linalg {
         class Row {
             friend Matrix;
         public:
-            double& operator[](size_t col_i) { return m_ptr[col_i]; }
-            const double& operator[](size_t col_i) const { return m_ptr[col_i]; }
+            double& operator[](size_t col_i);
+            const double& operator[](size_t col_i) const;
         private:
-            Row(Matrix& mat, size_t row_i) { m_ptr = mat.m_ptr + row_i * mat.m_columns; }
-            Row(const Matrix& mat, size_t row_i) { m_ptr = mat.m_ptr + row_i * mat.m_columns; }
+            Row(Matrix& mat, size_t row_i) :m_size(mat.m_columns) { m_ptr = mat.m_ptr + row_i * mat.m_columns; }
+            Row(const Matrix& mat, size_t row_i) :m_size(mat.m_columns) { m_ptr = mat.m_ptr + row_i * mat.m_columns; }
+
             double* m_ptr = nullptr;
+            size_t m_size = 0;
         };
 
         // constructors & destructor
@@ -31,10 +33,10 @@ namespace linalg {
         // operators
         Matrix& operator=(const Matrix& mat);
         Matrix& operator=(Matrix&& mat);
-        double& operator()(size_t row, size_t col) { return m_ptr[m_columns * row + col]; }
-        const double& operator()(size_t row, size_t col) const { return m_ptr[m_columns * row + col]; }
-        Row operator[](size_t row_i) { return {*this, row_i}; }
-        const Row operator[](size_t row_i) const { return {*this, row_i}; }
+        double& operator()(size_t row, size_t col);
+        const double& operator()(size_t row, size_t col) const;
+        Row operator[](size_t row_i);
+        const Row operator[](size_t row_i) const;
 
         Matrix& operator+=(const Matrix& mat);
         Matrix& operator-=(const Matrix& mat);

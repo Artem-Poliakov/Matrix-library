@@ -1,6 +1,7 @@
 #include <matrix.h>
-#include <iostream>
+#include <tests.h>
 
 int main() {
-    linalg::Matrix mat;
+    linalg_tests::construction_test();
+    linalg_tests::printing_test();
 }

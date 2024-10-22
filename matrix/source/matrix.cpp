@@ -8,6 +8,28 @@
 #define ACCURACY std::pow(10, -8)
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// --- class Row methods and functions ---
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+double& linalg::Matrix::Row::operator[](size_t col_i) {
+    if (col_i >= m_size) {
+        throw std::runtime_error("Index is out of range");
+    }
+    return m_ptr[col_i];
+}
+const double& linalg::Matrix::Row::operator[](size_t col_i) const {
+    if (col_i >= m_size) {
+        throw std::runtime_error("Index is out of range");
+    }
+    return m_ptr[col_i];
+}
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// --- class Matrix methods and functions ---
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
 	m_ptr = new double[rows * columns];
@@ -85,10 +107,36 @@ linalg::Matrix& linalg::Matrix::operator=(Matrix&& mat) {
     return *this;
 }
 
+// operators for calling matrix elements
+double& linalg::Matrix::operator()(size_t row, size_t col) {
+    if (row >= m_rows or col >= m_columns) {
+        throw std::runtime_error("Index is out of range");
+    }
+    return m_ptr[m_columns * row + col];
+}
+const double& linalg::Matrix::operator()(size_t row, size_t col) const {
+    if (row >= m_rows or col >= m_columns) {
+        throw std::runtime_error("Index is out of range");
+    }
+    return m_ptr[m_columns * row + col];
+}
+linalg::Matrix::Row linalg::Matrix::operator[](size_t row_i) {
+    if (row_i >= m_rows) {
+        throw std::runtime_error("Index is out of range");
+    }
+    return {*this, row_i};
+}
+const linalg::Matrix::Row linalg::Matrix::operator[](size_t row_i) const {
+    if (row_i >= m_rows) {
+        throw std::runtime_error("Index is out of range");
+    }
+    return {*this, row_i};
+}
+
 // visualising method (operator <<)
 std::ostream& linalg::operator<<(std::ostream& left, const Matrix& right) {
     if (right.size() == 0) {
-        left << "| |";
+        left << "| |\n";
         return left;
     }
     std::stringstream sout;
