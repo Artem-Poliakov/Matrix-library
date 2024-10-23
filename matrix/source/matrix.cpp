@@ -87,7 +87,7 @@ linalg::Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst)
 
 // copy operator =
 linalg::Matrix& linalg::Matrix::operator=(const Matrix& mat) {
-    if (mat.rows() != m_rows or mat.columns() != m_columns) {
+    if (mat.rows() != m_rows || mat.columns() != m_columns) {
         delete[] m_ptr;
         m_ptr = new double[mat.size()];
         m_rows = mat.rows();
@@ -109,13 +109,13 @@ linalg::Matrix& linalg::Matrix::operator=(Matrix&& mat) {
 
 // operators for calling matrix elements
 double& linalg::Matrix::operator()(size_t row, size_t col) {
-    if (row >= m_rows or col >= m_columns) {
+    if (row >= m_rows || col >= m_columns) {
         throw std::runtime_error("Index is out of range");
     }
     return m_ptr[m_columns * row + col];
 }
 const double& linalg::Matrix::operator()(size_t row, size_t col) const {
-    if (row >= m_rows or col >= m_columns) {
+    if (row >= m_rows || col >= m_columns) {
         throw std::runtime_error("Index is out of range");
     }
     return m_ptr[m_columns * row + col];
@@ -181,7 +181,7 @@ void linalg::Matrix::check_zeros() {
 
 // operator +=
 linalg::Matrix& linalg::Matrix::operator+=(const Matrix& mat) {
-    if (mat.rows() != m_rows or mat.columns() != m_columns) {
+    if (mat.rows() != m_rows || mat.columns() != m_columns) {
         throw std::runtime_error("Matrix shapes are not suitable");
     }
     for (size_t i = 0; i < this->size(); ++i) {
@@ -192,7 +192,7 @@ linalg::Matrix& linalg::Matrix::operator+=(const Matrix& mat) {
 
 // operator -=
 linalg::Matrix& linalg::Matrix::operator-=(const Matrix& mat) {
-    if (mat.rows() != m_rows or mat.columns() != m_columns) {
+    if (mat.rows() != m_rows || mat.columns() != m_columns) {
         throw std::runtime_error("Matrix shapes are not suitable");
     }
     for (size_t i = 0; i < this->size(); ++i) {
@@ -239,7 +239,7 @@ linalg::Matrix linalg::Matrix::operator-() {
 
 // operator == for comparing matrices
 bool linalg::operator==(const linalg::Matrix &mat1, const linalg::Matrix &mat2) {
-    if (mat1.rows() != mat2.rows() or mat1.columns() != mat2.columns()) {
+    if (mat1.rows() != mat2.rows() || mat1.columns() != mat2.columns()) {
         return false;
     }
     for (size_t i = 0; i < mat1.rows(); ++i) {
@@ -433,7 +433,7 @@ linalg::Matrix linalg::transpose(const linalg::Matrix& mat) {
 }
 
 // finding inverse matrix
-linalg::Matrix linalg::inverse(const linalg::Matrix& mat) {
+linalg::Matrix linalg::invert(const linalg::Matrix& mat) {
     double det = mat.det();
     if (std::fabs(det) < ACCURACY) {
         throw std::runtime_error("Matrix determinant is 0; inverse matrix cannot be found");

@@ -84,7 +84,7 @@ namespace linalg {
     double minor(const Matrix& mat, size_t row, size_t col);
     Matrix concatenate(const Matrix& mat1, const Matrix& mat2);
     Matrix transpose(const Matrix& mat);
-    Matrix inverse(const Matrix& mat);
+    Matrix invert(const Matrix& mat);
     Matrix power(const Matrix& mat, const int& deg);
 
     // certain types of matrices

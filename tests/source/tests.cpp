@@ -42,7 +42,6 @@ void linalg_tests::construction_test() {
         linalg::Matrix m5 = { {1, 2, 3}, {4, 5, 6} };
         linalg::Matrix m6 = { {1, 2, 3, 4, 5, 6} };
         linalg::Matrix m7 = { 1, 2, 3, 4, 5, 6 };
-        //linalg::Matrix m8 = { {1},{2},{3},{4},{5},{6} };
     }
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
@@ -64,7 +63,7 @@ void linalg_tests::assignment_test() {
         m(100, 100);
     }
     catch (const std::exception& e) {
-        std::cout << e.what() << "   WORKED\n" <<  std::endl;
+        std::cout << e.what() << "   WORKED" <<  std::endl;
     }
     test_report("assignment_test");
 }
@@ -87,7 +86,7 @@ void linalg_tests::reshape_test() {
         S.reshape(2, 2);
     }
     catch (const std::exception& e) {
-        std::cout << e.what() << "   WORKED\n" << std::endl;
+        std::cout << e.what() << "   WORKED" << std::endl;
     }
     test_report("reshape_test");
 }
@@ -146,15 +145,15 @@ void linalg_tests::linear_algebra_test() {
             size_t n = rand_size(1, 10);
             linalg::Matrix A = rand_matrix(n, n), B = rand_matrix(n, n);
 
-            std::cout << (A * linalg::inverse(A) == linalg::identity_matrix(n));
+            std::cout << (A * linalg::invert(A) == linalg::identity_matrix(n));
             std::cout << (A * linalg::identity_matrix(n) == A);
-            std::cout << (linalg::power(linalg::inverse(A), 3) == linalg::power(A, -3));
+            std::cout << (linalg::power(linalg::invert(A), 3) == linalg::power(A, -3));
 
             std::cout << (linalg::transpose(A + B) == (linalg::transpose(A) + linalg::transpose(B)));
             std::cout << (linalg::transpose(A * B) == (linalg::transpose(B) * linalg::transpose(A)));
-            std::cout << (linalg::inverse(A * B) == (linalg::inverse(B) * linalg::inverse(A)));
+            std::cout << (linalg::invert(A * B) == (linalg::invert(B) * linalg::invert(A)));
 
-            std::cout << (std::fabs(linalg::inverse(A).det() - (1 / A.det())) < ACCURACY);
+            std::cout << (std::fabs(linalg::invert(A).det() - (1 / A.det())) < ACCURACY);
             std::cout << (std::fabs((A * B).det() - (A.det() * B.det())) < ACCURACY);
 
             std::cout << '\n';
