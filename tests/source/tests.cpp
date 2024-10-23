@@ -2,8 +2,10 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
+#include <cmath>
 
 #define TESTS_NO 10
+#define ACCURACY std::pow(10, -8)
 
 size_t rand_size(size_t from, size_t to) {
     return static_cast<size_t>(std::rand() % (to - from + 1) + from);
@@ -146,6 +148,9 @@ void linalg_tests::linear_algebra_test() {
             std::cout << (linalg::transpose(A + B) == (linalg::transpose(A) + linalg::transpose(B)));
             std::cout << (linalg::transpose(A * B) == (linalg::transpose(B) * linalg::transpose(A)));
             std::cout << (linalg::inverse(A * B) == (linalg::inverse(B) * linalg::inverse(A)));
+
+            std::cout << (std::fabs(linalg::inverse(A).det() - (1 / A.det())) < ACCURACY);
+            std::cout << (std::fabs((A * B).det() - (A.det() * B.det())) < ACCURACY);
 
             std::cout << '\n';
         }
