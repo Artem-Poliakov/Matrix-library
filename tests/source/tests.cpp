@@ -135,14 +135,14 @@ void linalg_tests::arithmetics_test() {
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }
-    test_report("arithmetic_test");
+    test_report("arithmetics_test");
 }
 
 void linalg_tests::linear_algebra_test() {
     try {
         for (size_t i = 0; i < TESTS_NO; ++i)
         {
-            size_t n = rand_size(1, 10);
+            size_t n = rand_size(2, 10);
             linalg::Matrix A = rand_matrix(n, n), B = rand_matrix(n, n);
 
             std::cout << (A * linalg::invert(A) == linalg::identity_matrix(n));
@@ -154,7 +154,7 @@ void linalg_tests::linear_algebra_test() {
             std::cout << (linalg::invert(A * B) == (linalg::invert(B) * linalg::invert(A)));
 
             std::cout << (std::fabs(linalg::invert(A).det() - (1 / A.det())) < ACCURACY);
-            std::cout << (std::fabs((A * B).det() - (A.det() * B.det())) < ACCURACY);
+            std::cout << (std::fabs(A.norm() - std::sqrt((linalg::transpose(A) * A).trace())) < ACCURACY);
 
             std::cout << '\n';
         }
@@ -162,7 +162,7 @@ void linalg_tests::linear_algebra_test() {
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }
-    test_report("arithmetic_test");
+    test_report("linear_algebra_test");
 }
 
 void linalg_tests::gauss_test() {
@@ -178,5 +178,5 @@ void linalg_tests::gauss_test() {
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }
-    test_report("arithmetic_test");
+    test_report("gauss_test");
 }

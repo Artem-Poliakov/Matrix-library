@@ -87,7 +87,7 @@ linalg::Matrix::Matrix(std::initializer_list<double> lst) {
         m_columns = 1;
         m_ptr = new double[lst.size()];
         for (auto el: lst) {
-            m_ptr[i++] = static_cast<double>(el);
+            m_ptr[i++] = el;
         }
     }
 }
@@ -251,18 +251,17 @@ linalg::Matrix& linalg::Matrix::operator*=(const Matrix& mat) {
     if (m_columns != mat.rows()) {
         throw std::runtime_error("Matrix shapes are not suitable");
     }
-    Matrix copy1 = (*this);
-    Matrix copy2 = mat;
+    Matrix result(m_rows, mat.m_columns);
     for (size_t row = 0; row < m_rows; ++row) {
-        for (size_t col = 0; col < m_columns; ++col) {
-            (*this)(row, col) = 0;
+        for (size_t col = 0; col < mat.m_columns; ++col) {
+            result(row, col) = 0;
             for (size_t i = 0; i < m_columns; ++i) {
-                (*this)(row, col) += copy1(row, i) * copy2(i, col);
+                result(row, col) += (*this)(row, i) * mat(i, col);
             }
         }
     }
-    (*this).check_zeros();
-    return *this;
+    result.check_zeros();
+    return (*this = result);
 }
 
 // operator *= for multiplying matrix by a number
