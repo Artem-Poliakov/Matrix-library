@@ -64,13 +64,18 @@ void linalg_tests::assignment_test() {
         m(100, 100);
     }
     catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << e.what() << "   WORKED\n" <<  std::endl;
     }
     test_report("assignment_test");
 }
 
 void linalg_tests::reshape_test() {
     try {
+        size_t k = rand_size(1, 6), l = rand_size(1, 6);
+        linalg::Matrix mat = rand_matrix(k, l, true), column = rand_matrix(k, 1, true);
+        linalg::Matrix result = linalg::concatenate(mat, column);
+        std::cout << mat << "---concatenate---\n" << column << "---turns to---\n" << result << std::endl;
+
         for (size_t i = 0; i < TESTS_NO; ++i) {
             size_t m = rand_size(1, 10), n = rand_size(1, 10);
             linalg::Matrix M(m, n), Q(n, n);
@@ -82,7 +87,7 @@ void linalg_tests::reshape_test() {
         S.reshape(2, 2);
     }
     catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << e.what() << "   WORKED\n" << std::endl;
     }
     test_report("reshape_test");
 }
