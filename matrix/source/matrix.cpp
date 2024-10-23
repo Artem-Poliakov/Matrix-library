@@ -32,6 +32,9 @@ const double& linalg::Matrix::Row::operator[](size_t col_i) const {
 
 // constructor with 2 parameters
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
+    if (rows == 0 || columns == 0) {
+        throw std::runtime_error("Shape parameters must be non-zero");
+    }
 	m_ptr = new double[rows * columns];
 	m_rows = rows;
 	m_columns = columns;
@@ -39,6 +42,9 @@ linalg::Matrix::Matrix(size_t rows, size_t columns) {
 
 // constructor with 1 parameter
 linalg::Matrix::Matrix(size_t rows) {
+    if (rows == 0) {
+        throw std::runtime_error("Shape parameters must be non-zero");
+    }
     m_ptr = new double[rows];
     m_rows = rows;
     m_columns = 1;
@@ -46,11 +52,18 @@ linalg::Matrix::Matrix(size_t rows) {
 
 // copy constructor
 linalg::Matrix::Matrix(const Matrix& mat) {
-    m_ptr = new double[mat.size()];
-    m_rows = mat.rows();
-    m_columns = mat.columns();
-    for (size_t i = 0; i < mat.size(); ++i) {
-        m_ptr[i] = mat.m_ptr[i];
+    if (mat.empty()) {
+        m_ptr = nullptr;
+        m_rows = 0;
+        m_columns = 0;
+    }
+    else {
+        m_ptr = new double[mat.size()];
+        m_rows = mat.rows();
+        m_columns = mat.columns();
+        for (size_t i = 0; i < mat.size(); ++i) {
+            m_ptr[i] = mat.m_ptr[i];
+        }
     }
 }
 
@@ -63,30 +76,56 @@ linalg::Matrix::Matrix(Matrix&& mat) {
 
 // 1-d init list constructor
 linalg::Matrix::Matrix(std::initializer_list<double> lst) {
-    size_t i = 0;
-    m_rows = lst.size();
-    m_columns = 1;
-    m_ptr = new double[lst.size()];
-    for (auto el: lst) {
-        m_ptr[i++] = static_cast<double>(el);
+    if (lst.size() == 0) {
+        m_rows = 0;
+        m_columns = 0;
+        m_ptr = nullptr;
+    }
+    else {
+        size_t i = 0;
+        m_rows = lst.size();
+        m_columns = 1;
+        m_ptr = new double[lst.size()];
+        for (auto el: lst) {
+            m_ptr[i++] = static_cast<double>(el);
+        }
     }
 }
 
 // 2-d init list constructor
 linalg::Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst) {
-    size_t i = 0;
-    m_rows = lst.size();
-    m_columns = lst.begin()->size();
-    m_ptr = new double[m_rows * m_columns];
+    size_t cols = lst.begin()->size();
     for (std::initializer_list<double> small_lst: lst) {
-        for (double el: small_lst) {
-            m_ptr[i++] = el;
+        if (small_lst.size() != cols) {
+            throw std::runtime_error("Different sizes of rows in inner list");
+        }
+    }
+    if (cols== 0) {
+        m_rows = 0;
+        m_columns = 0;
+        m_ptr = nullptr;
+    }
+    else {
+        size_t i = 0;
+        m_rows = lst.size();
+        m_columns = cols;
+        m_ptr = new double[m_rows * m_columns];
+        for (std::initializer_list<double> small_lst: lst) {
+            for (double el: small_lst) {
+                m_ptr[i++] = el;
+            }
         }
     }
 }
 
 // copy operator =
 linalg::Matrix& linalg::Matrix::operator=(const Matrix& mat) {
+    if (mat.empty()) {
+        m_ptr = nullptr;
+        m_rows = 0;
+        m_columns = 0;
+        return *this;
+    }
     if (mat.rows() != m_rows || mat.columns() != m_columns) {
         delete[] m_ptr;
         m_ptr = new double[mat.size()];
@@ -141,17 +180,20 @@ std::ostream& linalg::operator<<(std::ostream& left, const Matrix& right) {
     }
     std::stringstream sout;
     size_t maxlength = 0;
+    size_t firstmaxlength = 0;
+
     for (size_t i = 0; i < right.rows(); ++i) {
         for (size_t j = 0; j < right.columns(); ++j) {
             sout << right(i, j);
             maxlength = std::max(maxlength, sout.str().size());
+            if (j == 0) { firstmaxlength = std::max(firstmaxlength, sout.str().size());}
             sout.str("");
         }
     }
 
     for (size_t i = 0; i < right.rows(); ++i) {
         left << '|';
-        left << std::setw(maxlength) << right(i, 0);
+        left << std::setw(firstmaxlength) << right(i, 0);
         for (size_t j = 1; j < right.columns(); ++j) {
             left << std::setw(maxlength + 1) << right(i, j);
         }
@@ -164,6 +206,9 @@ std::ostream& linalg::operator<<(std::ostream& left, const Matrix& right) {
 void linalg::Matrix::reshape(size_t rows, size_t cols) {
     if (rows * cols != this->size()) {
         throw std::runtime_error("Matrix sizes are not suitable");
+    }
+    if (m_rows == 0 || m_columns == 0) {
+        throw std::runtime_error("Matrix has size 0");
     }
 
     m_rows = rows;
@@ -294,11 +339,15 @@ linalg::Matrix linalg::operator*(const linalg::Matrix& mat, const double& value)
 
 // finding trace (sum of elements on main diagonal)
 double linalg::Matrix::trace() const {
+    if (m_rows == 0 || m_columns == 0) {
+        throw std::runtime_error("Matrix has size 0");
+    }
+    size_t n = m_rows;
     if (m_rows != m_columns) {
-        throw std::runtime_error("Matrix is not square");
+        if (m_rows > m_columns) { n = m_columns; }
     }
     double result = 0;
-    for (size_t i = 0; i < m_rows; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         result += (*this)(i, i);
     }
     return result;
@@ -306,6 +355,9 @@ double linalg::Matrix::trace() const {
 
 // finding Frobenius norm
 double linalg::Matrix::norm() const {
+    if (m_rows == 0 || m_columns == 0) {
+        throw std::runtime_error("Matrix has size 0");
+    }
     double result = 0;
     for (size_t i = 0; i < this->size(); ++i) {
         result += std::pow(m_ptr[i], 2);
@@ -367,6 +419,9 @@ linalg::Matrix linalg::gaussian_elimination(const linalg::Matrix& mat) {
 
 // finding determinant
 double linalg::Matrix::det() const {
+    if (m_rows == 0 || m_columns == 0) {
+        throw std::runtime_error("Matrix has size 0");
+    }
     if (m_rows != m_columns) {
         throw std::runtime_error("Matrix is not square");
     }
