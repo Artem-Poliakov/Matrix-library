@@ -254,7 +254,7 @@ bool linalg::operator==(const linalg::Matrix &mat1, const linalg::Matrix &mat2) 
 
 // operator != for comparing matrices
 bool linalg::operator!=(const linalg::Matrix &mat1, const linalg::Matrix &mat2) {
-    return not(mat1 == mat2);
+    return !(mat1 == mat2);
 }
 
 // operator +
@@ -478,7 +478,7 @@ linalg::Matrix linalg::power(const linalg::Matrix& mat, const int& deg) {
         throw std::runtime_error("Matrix is not square");
     }
     if (deg < 0) {
-        return power(inverse(mat), -deg);
+        return power(invert(mat), -deg);
     }
     else if (deg == 0) {
         return identity_matrix(mat.rows());
